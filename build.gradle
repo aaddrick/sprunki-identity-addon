@@ -135,6 +135,31 @@ repositories {
     }
 }
 
+// Task to download dependencies
+task downloadDependencies {
+    doLast {
+        def depsDir = file('libs')
+        depsDir.mkdirs()
+        
+        def identityJar = file('libs/identity-2.8.5-1.20.1-forge.jar')
+        def sprunkiJar = file('libs/sprunki-mod-1.0.9-1.20.1.jar')
+        
+        if (!identityJar.exists()) {
+            println 'Downloading Identity mod...'
+            new URL('https://mediafilez.forgecdn.net/files/6674/813/identity-2.8.5-1.20.1-forge.jar').withInputStream { i ->
+                identityJar.withOutputStream { it << i }
+            }
+        }
+        
+        if (!sprunkiJar.exists()) {
+            println 'Downloading Sprunki mod...'
+            new URL('https://mediafilez.forgecdn.net/files/6402/574/sprunki-mod-1.0.9-1.20.1.jar').withInputStream { i ->
+                sprunkiJar.withOutputStream { it << i }
+            }
+        }
+    }
+}
+
 dependencies {
     // Minecraft and Forge
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
@@ -142,11 +167,11 @@ dependencies {
     // Mixins
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     
-    // Mod dependencies - using direct CurseForge links
-    compileOnly fg.deobf('https://mediafilez.forgecdn.net/files/6674/813/identity-2.8.5-1.20.1-forge.jar')
-    compileOnly fg.deobf('https://mediafilez.forgecdn.net/files/6402/574/sprunki-mod-1.0.9-1.20.1.jar')
+    // Downloaded dependencies
+    compileOnly fg.deobf(files('libs/identity-2.8.5-1.20.1-forge.jar'))
+    compileOnly fg.deobf(files('libs/sprunki-mod-1.0.9-1.20.1.jar'))
     
-    // Local development dependencies (when available)
+    // Local development dependencies (when available - prefer these over libs/)
     if (file('reference/Identity/identity-2.8.5-1.20.1-forge.jar').exists()) {
         compileOnly fg.deobf(files('reference/Identity/identity-2.8.5-1.20.1-forge.jar'))
     }
@@ -154,6 +179,9 @@ dependencies {
         compileOnly fg.deobf(files('reference/sprunki-mod-1.0.9-1.20.1/sprunki-mod-1.0.9-1.20.1.jar'))
     }
 }
+
+// Make sure dependencies are downloaded before compilation
+compileJava.dependsOn downloadDependencies
 
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
