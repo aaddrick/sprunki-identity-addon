@@ -142,13 +142,17 @@ dependencies {
     // Mixins
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     
-    // Development dependencies - using actual JAR files
-    compileOnly fg.deobf(files('reference/Identity/identity-2.8.5-1.20.1-forge.jar'))
-    compileOnly fg.deobf(files('reference/sprunki-mod-1.0.9-1.20.1/sprunki-mod-1.0.9-1.20.1.jar'))
+    // Mod dependencies - using direct CurseForge links
+    compileOnly fg.deobf('https://mediafilez.forgecdn.net/files/6674/813/identity-2.8.5-1.20.1-forge.jar')
+    compileOnly fg.deobf('https://mediafilez.forgecdn.net/files/6402/574/sprunki-mod-1.0.9-1.20.1.jar')
     
-    // Runtime dependencies for testing (copy these JARs to run/mods/ for testing)
-    // runtimeOnly fg.deobf(files('reference/Identity/identity-2.8.5-1.20.1-forge.jar'))
-    // runtimeOnly fg.deobf(files('reference/sprunki-mod-1.0.9-1.20.1/sprunki-mod-1.0.9-1.20.1.jar'))
+    // Local development dependencies (when available)
+    if (file('reference/Identity/identity-2.8.5-1.20.1-forge.jar').exists()) {
+        compileOnly fg.deobf(files('reference/Identity/identity-2.8.5-1.20.1-forge.jar'))
+    }
+    if (file('reference/sprunki-mod-1.0.9-1.20.1/sprunki-mod-1.0.9-1.20.1.jar').exists()) {
+        compileOnly fg.deobf(files('reference/sprunki-mod-1.0.9-1.20.1/sprunki-mod-1.0.9-1.20.1.jar'))
+    }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
